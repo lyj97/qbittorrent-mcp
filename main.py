@@ -19,129 +19,130 @@ from api import (
     set_torrent_upload_limit_api,
     add_trackers_to_torrent_api,
     add_torrent_tags_api,
-    get_torrent_list_api
+    get_torrent_list_api,
+    search_torrents_api
 )
 
-# 定义关键参数
+# Define key parameters
 DEFAULT_HOST = 'http://127.0.0.1:8080'
 DEFAULT_USERNAME = 'admin'
 DEFAULT_PASSWORD = 'adminadmin'
 
-# 初始化 FastMCP 服务器
+# Initialize FastMCP server
 app = FastMCP('qbittorrent')
 
 @app.tool()
 async def add_torrent(query: str) -> str:
     """
-    添加种子文件到qBittorrent
+    Add torrent files to qBittorrent
     
     Args:
-        query: 包含种子文件路径的查询字符串，支持以下格式：
-               1. JSON字符串: "{\"file_paths\": [\"path/to/file1.torrent\", \"path/to/file2.torrent\"]}"
-               2. JSON字符串: "[\"path/to/file1.torrent\", \"path/to/file2.torrent\"]"
-               3. 单一文件路径: "path/to/file.torrent"
+        query: Query string containing torrent file path, supports the following formats:
+               1. JSON string: "{\"file_paths\": [\"path/to/file1.torrent\", \"path/to/file2.torrent\"]}"
+               2. JSON string: "[\"path/to/file1.torrent\", \"path/to/file2.torrent\"]"
+               3. Single file path: "path/to/file.torrent"
         
     Returns:
-        添加结果的状态和消息
+        Status and message of the add operation
     """
     return await add_torrent_api(query, DEFAULT_HOST, DEFAULT_USERNAME, DEFAULT_PASSWORD)
 
 @app.tool()
 async def delete_torrent(hashes: str, delete_files: bool = False) -> str:
     """
-    删除qBittorrent中的种子
+    Delete torrents from qBittorrent
     
     Args:
-        hashes: 要删除的种子哈希值，多个哈希值用|分隔，或者使用'all'删除所有种子
-        delete_files: 如果为True，同时删除下载的文件
+        hashes: Torrent hash values to delete, multiple hashes separated by |, or use 'all' to delete all torrents
+        delete_files: If True, also delete downloaded files
         
     Returns:
-        删除操作的结果消息
+        Result message of delete operation
     """
     return await delete_torrent_api(hashes, delete_files, DEFAULT_HOST, DEFAULT_USERNAME, DEFAULT_PASSWORD)
 
 @app.tool()
 async def pause_torrent(hashes: str) -> str:
     """
-    暂停种子
+    Pause torrents
     
     Args:
-        hashes: 要暂停的种子哈希值，多个哈希值用|分隔，或者使用'all'暂停所有种子
+        hashes: Torrent hash values to pause, multiple hashes separated by |, or use 'all' to pause all torrents
         
     Returns:
-        暂停操作的结果消息
+        Result message of pause operation
     """
     return await pause_torrent_api(hashes, DEFAULT_HOST, DEFAULT_USERNAME, DEFAULT_PASSWORD)
 
 @app.tool()
 async def resume_torrent(hashes: str) -> str:
     """
-    恢复种子
+    Resume torrents
     
     Args:
-        hashes: 要恢复的种子哈希值，多个哈希值用|分隔，或者使用'all'恢复所有种子
+        hashes: Torrent hash values to resume, multiple hashes separated by |, or use 'all' to resume all torrents
         
     Returns:
-        恢复操作的结果消息
+        Result message of resume operation
     """
     return await resume_torrent_api(hashes, DEFAULT_HOST, DEFAULT_USERNAME, DEFAULT_PASSWORD)
 
 @app.tool()
 async def get_torrent_trackers(hash: str) -> str:
     """
-    获取种子跟踪器
+    Get torrent trackers
     
     Args:
-        hash: 种子哈希值
+        hash: Torrent hash value
         
     Returns:
-        包含跟踪器信息的字符串
+        String containing tracker information
     """
     return await get_torrent_trackers_urls(hash, DEFAULT_HOST, DEFAULT_USERNAME, DEFAULT_PASSWORD)
 
 @app.tool()
 async def set_global_download_limit(limit: int) -> str:
     """
-    设置全局下载限速
+    Set global download speed limit
     
     Args:
-        limit: 限速值，单位为字节/秒
+        limit: Speed limit value, in bytes/second
         
     Returns:
-        设置限速的结果消息
+        Result message of setting speed limit
     """ 
     return await set_global_download_limit_api(limit)
 
 @app.tool()
 async def set_global_upload_limit(limit: int) -> str:
     """
-    设置全局上传限速
+    Set global upload speed limit
     
     Args:
-        limit: 限速值，单位为字节/秒
+        limit: Speed limit value, in bytes/second
         
     Returns:
-        设置限速的结果消息
+        Result message of setting speed limit
     """
     return await set_global_upload_limit_api(limit)
 
 @app.tool()
 async def get_application_version() -> str:
     """
-    获取qBittorrent版本
+    Get qBittorrent version
     
     Returns:
-        qBittorrent版本
+        qBittorrent version
     """
     return await get_application_version_api()
 
 @app.tool()
 async def set_file_priority(hash: str, id: str, priority: int) -> str:
     """
-    设置文件优先级
+    Set file priority
     
     Args:
-        hash: 种子哈希值
+        hash: Torrent hash value
         id: correspond to file position inside the array returned by torrent contents API, e.g. id=0 for first file, id=1 for second file, etc.
         priority: 
         Value	Description
@@ -151,7 +152,7 @@ async def set_file_priority(hash: str, id: str, priority: int) -> str:
         7	Maximal priority
         
     Returns:
-        设置文件优先级的结果消息
+        Result message of setting file priority
         HTTP Status Code	Scenario
         400	Priority is invalid
         400	At least one file id is not a valid integer
@@ -165,65 +166,94 @@ async def set_file_priority(hash: str, id: str, priority: int) -> str:
 @app.tool()
 async def set_torrent_download_limit(hash: str, limit: int) -> str:
     """
-    设置种子下载限速
+    Set torrent download speed limit
     
     Args:
-        hash: 种子哈希值
-        limit: 限速值，单位为字节/秒
+        hash: Torrent hash value
+        limit: Speed limit value, in bytes/second
         
     Returns:
-        设置种子下载限速的结果消息
+        Result message of setting torrent download speed limit
     """
     return await set_torrent_download_limit_api(hash, limit, DEFAULT_HOST, DEFAULT_USERNAME, DEFAULT_PASSWORD)
 
 @app.tool()
 async def set_torrent_upload_limit(hash: str, limit: int) -> str:
     """
-    设置种子上传限速
+    Set torrent upload speed limit
     
     Args:
-        hash: 种子哈希值
-        limit: 限速值，单位为字节/秒
+        hash: Torrent hash value
+        limit: Speed limit value, in bytes/second
         
     Returns:
-        设置种子上传限速的结果消息
+        Result message of setting torrent upload speed limit
     """ 
     return await set_torrent_upload_limit_api(hash, limit, DEFAULT_HOST, DEFAULT_USERNAME, DEFAULT_PASSWORD)
 
 @app.tool()
 async def add_trackers_to_torrent(hash: str, trackers: str) -> str:
     """
-    添加跟踪器到种子    
+    Add trackers to torrent
     
     Args:
-        hash: 种子哈希值
-        trackers: 跟踪器URL，多个URL用%0A分隔
+        hash: Torrent hash value
+        trackers: Tracker URL, multiple URLs separated by %0A
         
     Returns:
-        添加跟踪器的结果消息 
+        Result message of adding trackers
     """
     return await add_trackers_to_torrent_api(hash, trackers, DEFAULT_HOST, DEFAULT_USERNAME, DEFAULT_PASSWORD)
 
 @app.tool()
 async def add_torrent_tags(hash: str, tags: str) -> str:
     """
-    添加种子标签
+    Add torrent tags
     
     Args:
-        hash: 种子哈希值
-        tags: 标签列表，多个标签用逗号分隔
+        hash: Torrent hash value
+        tags: Tag list, multiple tags separated by comma
         
     Returns:
-        添加种子标签的结果消息
+        Result message of adding torrent tags
     """
     return await add_torrent_tags_api(hash, tags, DEFAULT_HOST, DEFAULT_USERNAME, DEFAULT_PASSWORD)
 
 @app.tool()
 async def get_torrent_list() -> str:
     """
-    获取种子列表
+    Get torrent list
     """
     return await get_torrent_list_api(host=DEFAULT_HOST, username=DEFAULT_USERNAME, password=DEFAULT_PASSWORD)
+
+@app.tool()
+async def search_torrents(
+    pattern: str,
+    category: str = 'all',
+    plugins: str = 'all',
+    max_size_gb: float = 5.0
+) -> str:
+    """
+    搜索种子
+    
+    Args:
+        pattern: 搜索关键词
+        category: 搜索类别 (all, movies, anime, books, tv, software等)，默认为all
+        plugins: 搜索插件 (all或特定插件)，默认为all
+        max_size_gb: 最大文件大小限制(GB)，默认为5GB。结果会过滤掉大于此大小的文件
+        
+    Returns:
+        搜索结果的JSON字符串，包含过滤和排序后的top 10结果，按种子数(nbSeeders)降序排列
+    """
+    return await search_torrents_api(
+        pattern=pattern,
+        category=category,
+        plugins=plugins,
+        max_size_gb=max_size_gb,
+        host=DEFAULT_HOST,
+        username=DEFAULT_USERNAME,
+        password=DEFAULT_PASSWORD
+    )
 
 if __name__ == "__main__":
     app.run(transport='stdio')

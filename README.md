@@ -1,57 +1,58 @@
-# qBittorrent MCP 服务
+# qBittorrent MCP Service
 
-qBittorrent MCP 是一个基于 FastMCP 的服务，提供了与 qBittorrent WebUI API 交互的功能接口。
+qBittorrent MCP is a service based on FastMCP that provides functional interfaces for interacting with the qBittorrent WebUI API.
 
-## 功能列表
+## Feature List
 
-该服务提供了以下功能：
+This service provides the following features:
 
-### 种子管理
-- `add_torrent`: 添加种子文件到 qBittorrent
-- `delete_torrent`: 删除指定种子（可选同时删除文件）
-- `pause_torrent`: 暂停种子下载
-- `resume_torrent`: 恢复种子下载
-- `get_torrent_list`: 获取所有种子列表
+### Torrent Management
+- `add_torrent`: Add torrent files to qBittorrent
+- `delete_torrent`: Delete specified torrents (optionally delete files)
+- `pause_torrent`: Pause torrent downloads
+- `resume_torrent`: Resume torrent downloads
+- `get_torrent_list`: Get list of all torrents
+- `search_torrents`: Search torrents
 
-### 跟踪器与标签
-- `get_torrent_trackers`: 获取种子的跟踪器列表
-- `add_trackers_to_torrent`: 向种子添加新的跟踪器
-- `add_torrent_tags`: 为种子添加标签
+### Trackers and Tags
+- `get_torrent_trackers`: Get tracker list for a torrent
+- `add_trackers_to_torrent`: Add new trackers to a torrent
+- `add_torrent_tags`: Add tags to a torrent
 
-### 速度与优先级控制
-- `set_global_download_limit`: 设置全局下载速度限制
-- `set_global_upload_limit`: 设置全局上传速度限制
-- `set_torrent_download_limit`: 设置特定种子的下载速度限制
-- `set_torrent_upload_limit`: 设置特定种子的上传速度限制
-- `set_file_priority`: 设置特定文件的下载优先级
+### Speed and Priority Control
+- `set_global_download_limit`: Set global download speed limit
+- `set_global_upload_limit`: Set global upload speed limit
+- `set_torrent_download_limit`: Set download speed limit for a specific torrent
+- `set_torrent_upload_limit`: Set upload speed limit for a specific torrent
+- `set_file_priority`: Set download priority for a specific file
 
-### 系统信息
-- `get_application_version`: 获取qBittorrent应用程序版本
+### System Information
+- `get_application_version`: Get qBittorrent application version
 
-## 配置
+## Configuration
 
-服务使用以下配置参数：
-- `DEFAULT_HOST`: qBittorrent WebUI的主机地址
-- `DEFAULT_USERNAME`: qBittorrent WebUI用户名
-- `DEFAULT_PASSWORD`: qBittorrent WebUI密码
+The service uses the following configuration parameters:
+- `DEFAULT_HOST`: qBittorrent WebUI host address
+- `DEFAULT_USERNAME`: qBittorrent WebUI username
+- `DEFAULT_PASSWORD`: qBittorrent WebUI password
 
-## 使用方法
+## Usage
 
-1. 确保已安装所需依赖：
+1. Ensure required dependencies are installed:
    ```
    pip install httpx mcp
    ```
 
-2. 运行MCP服务：
+2. Run the MCP service:
    ```
    python main.py
    ```
 
-## 开发
+## Development
 
-服务分为两个主要文件：
-- `main.py`: 定义MCP服务接口和配置参数
-- `api.py`: 实现与qBittorrent WebUI的交互逻辑
+The service is divided into two main files:
+- `main.py`: Defines MCP service interface and configuration parameters
+- `api.py`: Implements interaction logic with qBittorrent WebUI
 ```json
    "mcp_servers": [
         {
