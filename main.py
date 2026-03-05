@@ -23,10 +23,10 @@ from api import (
     search_torrents_api
 )
 
-# Define key parameters
-DEFAULT_HOST = 'http://127.0.0.1:8080'
-DEFAULT_USERNAME = 'admin'
-DEFAULT_PASSWORD = 'adminadmin'
+# Define key parameters (can be overridden by environment variables)
+DEFAULT_HOST = os.getenv("QB_HOST", "http://127.0.0.1:8080")
+DEFAULT_USERNAME = os.getenv("QB_USERNAME", "admin")
+DEFAULT_PASSWORD = os.getenv("QB_PASSWORD", "adminadmin")
 
 # Initialize FastMCP server
 app = FastMCP('qbittorrent')

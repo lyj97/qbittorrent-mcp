@@ -32,9 +32,9 @@ This service provides the following features:
 ## Configuration
 
 The service uses the following configuration parameters:
-- `DEFAULT_HOST`: qBittorrent WebUI host address
-- `DEFAULT_USERNAME`: qBittorrent WebUI username
-- `DEFAULT_PASSWORD`: qBittorrent WebUI password
+- `QB_HOST`: qBittorrent WebUI host address (default: `http://127.0.0.1:8080`)
+- `QB_USERNAME`: qBittorrent WebUI username (default: `admin`)
+- `QB_PASSWORD`: qBittorrent WebUI password (default: `adminadmin`)
 
 ## Usage
 
@@ -46,6 +46,32 @@ The service uses the following configuration parameters:
 2. Run the MCP service:
    ```
    python main.py
+   ```
+
+## Docker
+
+1. Build image:
+   ```
+   docker build -t qbittorrent-mcp .
+   ```
+
+2. Run container:
+   ```
+   docker run --rm -i \
+     -e QB_HOST="http://host.docker.internal:8080" \
+     -e QB_USERNAME="admin" \
+     -e QB_PASSWORD="adminadmin" \
+     qbittorrent-mcp
+   ```
+
+3. If your torrent files are on host and need to be uploaded by file path, mount them:
+   ```
+   docker run --rm -i \
+     -v /path/to/torrents:/torrents \
+     -e QB_HOST="http://host.docker.internal:8080" \
+     -e QB_USERNAME="admin" \
+     -e QB_PASSWORD="adminadmin" \
+     qbittorrent-mcp
    ```
 
 ## Development
