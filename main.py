@@ -5,7 +5,6 @@ import os
 import json
 import uuid
 from api import (
-    login_to_qbittorrent,
     add_torrent_api,
     delete_torrent_api,
     pause_torrent_api,
@@ -22,14 +21,15 @@ from api import (
     get_torrent_list_api,
     search_torrents_api
 )
+from config import settings
 
-# Define key parameters (can be overridden by environment variables)
-DEFAULT_HOST = os.getenv("QB_HOST", "http://127.0.0.1:8080")
-DEFAULT_USERNAME = os.getenv("QB_USERNAME", "admin")
-DEFAULT_PASSWORD = os.getenv("QB_PASSWORD", "adminadmin")
+# Define key parameters (use config settings)
+DEFAULT_HOST = settings.qb_host
+DEFAULT_USERNAME = settings.qb_username
+DEFAULT_PASSWORD = settings.qb_password
 
 # Initialize FastMCP server
-app = FastMCP('qbittorrent')
+app = FastMCP('qbittorrent', host='0.0.0.0', port=8001)
 
 @app.tool()
 async def add_torrent(query: str) -> str:
@@ -256,4 +256,14 @@ async def search_torrents(
     )
 
 if __name__ == "__main__":
-    app.run(transport='stdio')
+    import sys
+    
+    # 支持通过命令行参数选择传输模式
+    transport_mode = sys.argv[1] if len(sys.argv) > 1 else 'http'
+    
+    if transport_mode == 'http':
+        # HTTP Streamable 流式传输模式（基于 POST 的双向流）
+        app.run(transport='streamable-http')
+    else:
+        # 标准输入输出模式
+        app.run(transport='stdio')
